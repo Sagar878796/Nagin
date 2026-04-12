@@ -1857,9 +1857,8 @@ https://github.com/karlfazreen/playlist/disneychannel.m3u8
 # ═══ BOTTOM INFO ═══
 
 
-#DATE:- 12-04-2026 07:00
+#DATE:- 12-04-2026 09:40
 #Written and Directed by ✨ D O C T O R - S T R A N G E ✨
-# Join us on Telegram: https://t.me/jitendraunatti_github
 
 #EXTINF:-1 group-logo="https://astrogo.astro.com.my/staticFiles/images/icons/astroLogoNew.png"
 #EXTINF:-1  group-logo="https://sflex07.fun/Logo/Astro.png" group-title="05 | Astro- Indian" tvg-logo="https://blogger.googleusercontent.com/img/a/AVvXsEhqkI13LMu9ZJkaBc4AvEs6N0NwEzvEIT2h6pkBpARRgAUnElL9zlcl_BbDy2HVdMvm3dr15RZkmcYhmJrU9yo8OfRGRkccB_pwsUJZ3cUy8hKMwt0I1HlysOXefS0n7F2JmW4Cl4bChdLRlGZMczBnYKcpywBbLGPga5oGJBGw7PsjvskDglOjsN53euMr",Bollywood HD
@@ -2155,16 +2154,6 @@ https://d1g8wgjurz8via.cloudfront.net//bpk-tv//Zeecinemalu/default//manifest.mpd
 #KODIPROP:inputstream.adaptive.license_key={"keys":[{"kty":"oct","kid":"UOcUtl6tRTy_q5sgvtXHnQ","k":"vAjhCLnuT2W5nLna2VMvPw"}],"type":"temporary"}
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36
 https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeekannada/default/manifest.mpd
-#EXTINF:-1 tvg-id="1090526879" tvg-name="UFC 327 - Prochazka vs Ulberg" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017086/1775768116347237_UFC_327_Prochazka_vs_Ulberg_eng_9apr_landscape_thumb.jpg" group-title="Fight Sports",ENG | UFC 327 - Prelims & Prochazka vs Ulberg - 12 Apr 2026
-https://sonymtmnew-akamaized.pages.dev/hls/live/2094588/UFC_327_1104/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=a19114de1c7faa3e0fa7c633777d6fd9-1775957400155
-#EXTINF:-1 tvg-id="1090526879" tvg-name="UFC 327 - Prochazka vs Ulberg" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017086/1775768116347237_UFC_327_Prochazka_vs_Ulberg_eng_9apr_landscape_thumb.jpg" group-title="Fight Sports",HIN | UFC 327 - Prelims & Prochazka vs Ulberg - 12 Apr 2026
-https://sonymtmnew-akamaized.pages.dev/hls/live/2094588/UFC_327_1104/HIN/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=a19114de1c7faa3e0fa7c633777d6fd9-1775957400155
-#EXTINF:-1 tvg-id="1090526879" tvg-name="UFC 327 - Prochazka vs Ulberg" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017086/1775768116347237_UFC_327_Prochazka_vs_Ulberg_eng_9apr_landscape_thumb.jpg" group-title="Fight Sports",TAM | UFC 327 - Prelims & Prochazka vs Ulberg - 12 Apr 2026
-https://sonymtmnew-akamaized.pages.dev/hls/live/2094588/UFC_327_1104/TAM/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=a19114de1c7faa3e0fa7c633777d6fd9-1775957400155
-#EXTINF:-1 tvg-id="1090526879" tvg-name="UFC 327 - Prochazka vs Ulberg" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017086/1775768116347237_UFC_327_Prochazka_vs_Ulberg_eng_9apr_landscape_thumb.jpg" group-title="Fight Sports",TEL | UFC 327 - Prelims & Prochazka vs Ulberg - 12 Apr 2026
-https://sonymtmnew-akamaized.pages.dev/hls/live/2094588/UFC_327_1104/TEL/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=a19114de1c7faa3e0fa7c633777d6fd9-1775957400155
-#EXTINF:-1 tvg-id="1090526879" tvg-name="UFC 327 - Prochazka vs Ulberg" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017086/1775768116347237_UFC_327_Prochazka_vs_Ulberg_eng_9apr_landscape_thumb.jpg" group-title="Fight Sports",KAN | UFC 327 - Prelims & Prochazka vs Ulberg - 12 Apr 2026
-https://sonymtmnew-akamaized.pages.dev/hls/live/2094588/UFC_327_1104/KAN/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=a19114de1c7faa3e0fa7c633777d6fd9-1775957400155
 #EXTINF:-1 tvg-logo="https://v3img.voot.com/resizeMedium,w_1090,h_613/v3Storage/assets/cnbc-awaaz-16x9-1702387934761.jpg" group-title="03 | JioStar-Business" group-logo="https://sflex07.fun/Logo/JioStar.png",CNBC Awaaz
 #EXTHTTP:{"Cookie":"hdntl=exp=1776023434~acl=%2f*~id=932786cfee4c31bf7a7a5bab160557a7~data=hdntl~hmac=1365bee99aef413bce28500bc7c111c3684337f6907ea93ce49baddec55ecb0b","Origin":"https://www.hotstar.com","Referer":"https://www.hotstar.com/"}
 #KODIPROP:inputstream=inputstream.adaptive
