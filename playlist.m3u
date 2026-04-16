@@ -600,8 +600,9 @@ https://github.com/karlfazreen/playlist/disneychannel.m3u8
 # ═══ BOTTOM INFO ═══
 
 
-#DATE:- 16-04-2026 03:20
+#DATE:- 17-04-2026 00:20
 #Written and Directed by ✨ D O C T O R - S T R A N G E ✨
+# Join us on Telegram: https://t.me/jitendraunatti_github
 
 #EXTINF:-1 group-logo="https://astrogo.astro.com.my/staticFiles/images/icons/astroLogoNew.png"
 #EXTINF:-1  group-logo="https://sflex07.fun/Logo/Astro.png" group-title="05 | Astro- Indian" tvg-logo="https://blogger.googleusercontent.com/img/a/AVvXsEhqkI13LMu9ZJkaBc4AvEs6N0NwEzvEIT2h6pkBpARRgAUnElL9zlcl_BbDy2HVdMvm3dr15RZkmcYhmJrU9yo8OfRGRkccB_pwsUJZ3cUy8hKMwt0I1HlysOXefS0n7F2JmW4Cl4bChdLRlGZMczBnYKcpywBbLGPga5oGJBGw7PsjvskDglOjsN53euMr",Bollywood HD
@@ -905,6 +906,20 @@ https://in-mc-fblive.fancode.com/mumbai/141830_english_hls_8aef32dc7d21406_1ta-d
 https://in-mc-fblive.fancode.com/mumbai/141845_english_hls_e32a4cffca78407_1ta-di_h264/index.m3u8
 #EXTINF:-1 group-logo="https://sflex07.fun/Logo/FAN.png", tvg-logo="https://www.fancode.com/skillup-uploads/cms-media/BMW-Open-by-Bitpanda_fc-web.jpg" group-title="04 | Fancode-Tennis", Court 1 vs Munich,Germany (ATP 500 - BMW Open by Bitpanda 2026)
 https://in-mc-fblive.fancode.com/mumbai/141844_english_hls_b0fb375bef4388_1ta-di_h264/index.m3u8
+#EXTINF:-1 tvg-id="1090528046" tvg-name="UEFA Europa League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000016848/1775141471468765_UEL26_QuarterFinal_Leg2_Nottingham_Forest_vs_Porto_30mar_landscape_thumb.jpg" group-title="Football",ENG | Nottingham Forest vs Porto  - Quarter-Final - Leg 2 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2022318/Nottingh1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
+#EXTINF:-1 tvg-id="1090528047" tvg-name="UEFA Europa League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000016836/1775134091370488_UEL26_QuarterFinal_Leg1_Bologna_vs_Aston_Villa_30mar_landscape_thumb.jpg" group-title="Football",ENG | Aston Villa  vs Bologna  - Quarter-Final - Leg 2 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2094589/ASTON_VI1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
+#EXTINF:-1 tvg-id="1090528097" tvg-name="UEFA Conference League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000016853/1775152567415363_UECL26_QF_leg2_Fiorentina_vs_Crystal_Palace_2apr_landscape_thumb.jpg" group-title="Football",ENG | Fiorentina vs Crystal Palace FC - Quarter-Final - Leg 2 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2018457/Fiorenti1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
+#EXTINF:-1 tvg-id="1090528021" tvg-name="UEFA Europa League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000016848/1775137553843765_UEL26_QuarterFinal_Leg2_Real_Betis_vs_Braga_30mar_landscape_thumb.jpg" group-title="Football",ENG | Real Betis vs Braga  - Quarter-Final - Leg 2 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2005445/Real_Bet1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
+#EXTINF:-1 tvg-id="1090528098" tvg-name="UEFA Conference League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000016853/1775152821982363_UECL26_QF_leg2_AEK_Athens_vs_Rayo_Vallecano_2apr_landscape_thumb.jpg" group-title="Football",ENG | Athens FC vs Rayo Vallecano - Quarter-Final - Leg 2 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2022319/Athens_F1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
+#EXTINF:-1 tvg-id="1090528099" tvg-name="UEFA Conference League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000016853/1775153733910363_UECL26_QF_leg2_Strasbourg_vs_Mainz_2apr_landscape_thumb.jpg" group-title="Football",ENG | Strasbourg vs Mainz - Quarter-Final - Leg 2 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2022315/Strasbou1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
+#EXTINF:-1 tvg-id="1090528100" tvg-name="LIV Golf" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017239/177624298415552_Golf_Mexico_Day1_landscape_thumb.jpg" group-title="Golf",ENG | Mexico City - Day 1 - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2018458/LIV_Golf1604/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=62a79b2a5a871b47d9320e43902251a0-1776365400111
 #EXTINF:-1 tvg-logo="https://v3img.voot.com/resizeMedium,w_1090,h_613/v3Storage/assets/cnbc-awaaz-16x9-1702387934761.jpg" group-title="03 | JioStar-Business" group-logo="https://sflex07.fun/Logo/JioStar.png",CNBC Awaaz
 #EXTHTTP:{"Cookie":"hdntl=exp=1776418026~acl=%2f*~id=b041d785119b96b58317562bc60e543a~data=hdntl~hmac=ddbf819ce94c9df55c3f368801313f481549ad3cd31713c39b259356b36d49df","Origin":"https://www.hotstar.com","Referer":"https://www.hotstar.com/"}
 #KODIPROP:inputstream=inputstream.adaptive
