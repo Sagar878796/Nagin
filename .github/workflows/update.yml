@@ -15,7 +15,7 @@ jobs:
 
       - name: Download latest M3U
         run: |
-          curl -L "https://yowaimo.in/StreamFlexTv/playlist.php?name=SFBRMYCG&token=e1265dd4bee0302fd0fc7d50" -o playlist.m3u
+          curl -L "http://datahub11.com/get.php?username=910039307&password=782745303&type=m3u_plus&output=ts" -o playlist.m3u
 
       - name: Validate file
         run: |
