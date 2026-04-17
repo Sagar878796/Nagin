@@ -598,8 +598,9 @@ https://github.com/karlfazreen/playlist/disneychannel.m3u8
 # ═══ BOTTOM INFO ═══
 
 
-#DATE:- 17-04-2026 06:00
+#DATE:- 17-04-2026 18:20
 #Written and Directed by ✨ D O C T O R - S T R A N G E ✨
+# Join us on Telegram: https://t.me/jitendraunatti_github
 
 #EXTINF:-1 group-logo="https://astrogo.astro.com.my/staticFiles/images/icons/astroLogoNew.png"
 #EXTINF:-1  group-logo="https://sflex07.fun/Logo/Astro.png" group-title="05 | Astro- Indian" tvg-logo="https://blogger.googleusercontent.com/img/a/AVvXsEhqkI13LMu9ZJkaBc4AvEs6N0NwEzvEIT2h6pkBpARRgAUnElL9zlcl_BbDy2HVdMvm3dr15RZkmcYhmJrU9yo8OfRGRkccB_pwsUJZ3cUy8hKMwt0I1HlysOXefS0n7F2JmW4Cl4bChdLRlGZMczBnYKcpywBbLGPga5oGJBGw7PsjvskDglOjsN53euMr",Bollywood HD
@@ -895,6 +896,8 @@ https://d1g8wgjurz8via.cloudfront.net//bpk-tv//Zeecinemalu/default//manifest.mpd
 #KODIPROP:inputstream.adaptive.license_key={"keys":[{"kty":"oct","kid":"UOcUtl6tRTy_q5sgvtXHnQ","k":"vAjhCLnuT2W5nLna2VMvPw"}],"type":"temporary"}
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36
 https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeekannada/default/manifest.mpd
+#EXTINF:-1 tvg-id="1090528108" tvg-name="UEFA Youth League 2025-26" tvg-logo="https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000017283/1776353669691827_UYL26_SemiFinal_Leg1_Benfica_vs_Club_Brugge_25mar_landscape_thumb.jpg" group-title="Football",ENG | Benfica vs Club Brugge - Semi-Final - 17 Apr 2026
+https://sonymtmnew-akamaized.pages.dev/hls/live/2022320/Benfica_1704/ENG/master.m3u8|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0&Referer=https://www.sonyliv.com/&Origin=https://www.sonyliv.com&x-playback-session-id=66d48e84018ac2fff3bbd2e934b3a426-1776430200119
 #EXTINF:-1 tvg-logo="https://v3img.voot.com/resizeMedium,w_1090,h_613/v3Storage/assets/cnbc-awaaz-16x9-1702387934761.jpg" group-title="03 | JioStar-Business" group-logo="https://sflex07.fun/Logo/JioStar.png",CNBC Awaaz
 #EXTHTTP:{"Cookie":"hdntl=exp=1776438692~acl=%2f*~id=bb3880c8a8aacfbfd7d553ffcea4b28a~data=hdntl~hmac=2d3507b2bec53634d638fc9470dbfc48c80745ffb1628529b4cf4a549e7969d5","Origin":"https://www.hotstar.com","Referer":"https://www.hotstar.com/"}
 #KODIPROP:inputstream=inputstream.adaptive
