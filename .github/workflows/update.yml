@@ -17,10 +17,10 @@ jobs:
         run: |
           curl -L "http://datahub11.com/get.php?username=230155634&password=188156327&type=m3u_plus&output=ts" -o full.m3u
 
-      - name: Filter India channels
+      - name:
         run: |
           echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 "india\|sports india\|sony\|star sports\|dd\|zeetv\|aaj tak\|news|IPL/IPL(2026)" full.m3u >> playlist.m3u || true
+  
       - name: Validate file
         run: |
           echo "Final file:"
