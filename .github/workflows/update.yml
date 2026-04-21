@@ -20,7 +20,7 @@ jobs:
       - name: Filter India channels
         run: |
           echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 "india|star sports|sony|zee|dd|news|sports|cricket|ipl" full.m3u >> playlist.m3u || true
+          grep -i -A1 "india\|sports india\|sony\|star sports\|dd\|zeetv\|aaj tak\|news|IPL/IPL(2026)" full.m3u >> playlist.m3u || true
 
       - name: Validate file
         run: |
