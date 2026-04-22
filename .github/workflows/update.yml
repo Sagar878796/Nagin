@@ -15,7 +15,7 @@ jobs:
 
       - name: Download full M3U
         run: |
-          curl -L "http://datahub11.com/get.php?username=230155634&password=188156327&type=m3u_plus&output=ts" -o full.m3u
+          curl -L "http://datahub11.com/get.php?username=158079006&password=918944723&type=m3u_plus&output=ts" -o full.m3u
 
       - name: Filter India channels
         run: |
