@@ -17,7 +17,11 @@ jobs:
         run: |
           curl -L "https://m3umergers.xyz/filex-m3umergers/channels.php?playlist=all" -o full.m3u
 
-      
+      - name: Filter India channels
+        run: |
+          echo "#EXTM3U" > playlist.m3u
+          grep -i -A1 "india\|sports india\|sony\|star sports\|dd\|zeetv\|aaj tak\|news|IPL/CHAMPION LEAGUE(2026)" full.m3u >> playlist.m3u || true
+
       - name: Validate file
         run: |
           echo "Final file:"
