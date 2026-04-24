@@ -15,7 +15,7 @@ jobs:
 
       - name: Download full M3U
         run: |
-          curl -L "https://m3umergers.xyz/filex-m3umergers/channels.php?playlist=all" -o full.m3u
+          curl -L "http://opplex.org:8080/get.php?username=3165002851&password=3071429775&type=m3u_plus" -o full.m3u
 
       - name: Filter India + IPL channels
         run: |
