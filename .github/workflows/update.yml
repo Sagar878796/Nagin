@@ -1,4 +1,4 @@
-name: IPTV Auto Updater (India + IPL Only)
+name: IPTV Auto Proxy Playlist
 
 on:
   schedule:
@@ -6,38 +6,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-playlist:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Download full M3U
+      - name: Download Source Playlist
         run: |
-          curl -L "http://opplex.org:8080/get.php?username=3165002851&password=3071429775&type=m3u_plus" -o full.m3u
+          curl -L "https://m3umergers.xyz/filex-m3umergers/channels.php?playlist=all" -o full.m3u
 
-      - name: Filter India + IPL channels
+      - name: Filter Useful Channels
         run: |
           echo "#EXTM3U" > playlist.m3u
+          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
 
-          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|cricket|ipl|t20|willow|ten sports|aaj tak|news18|zee|colors|sony tv" full.m3u >> playlist.m3u || true
-
-      - name: Remove duplicates
+      - name: Clean Duplicate Links
         run: |
           awk '!seen[$0]++' playlist.m3u > clean.m3u
           mv clean.m3u playlist.m3u
 
-      - name: Validate file
-        run: |
-          echo "Final file:"
-          ls -lh playlist.m3u
-          head -n 20 playlist.m3u
-
       - name: Commit & Push
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "bot"
+          git config --global user.email "bot@users.noreply.github.com"
           git add playlist.m3u
-          git commit -m "India + IPL playlist update $(date)" || echo "No changes"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git commit -m "Auto update $(date)" || echo "No changes"
+          git push
