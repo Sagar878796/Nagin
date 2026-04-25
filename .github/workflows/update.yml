@@ -14,7 +14,7 @@ jobs:
 
       - name: Download Source Playlist
         run: |
-          curl -L "https://m3umergers.xyz/filex-m3umergers/channels.php?playlist=all" -o full.m3u
+          curl -L "https://amaira.pages.dev/m3us/yuppxm" -o full.m3u
 
       - name: Filter Useful Channels
         run: |
