@@ -14,7 +14,7 @@ jobs:
 
       - name: Download Source Playlist
         run: |
-          curl -L "http://tivimate.in:80/get.php?username=play&password=live.php?mac=00:1A:79:B2:6A:22&type=m3u_plus&output=ts" -o full.m3u
+          curl -L "https://m3umergers.xyz/filex-m3umergers/channels.php?playlist=all" -o full.m3u
 
       - name: Filter Useful Channels
         run: |
