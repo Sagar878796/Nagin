@@ -1,4 +1,4 @@
-name: IPTV Live TV Only Playlist
+name: Ultra Clean IPTV Playlist
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
         run: |
           curl -L "http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts" -o full.m3u
 
-      - name: Extract Only Live TV (Remove Movies/Series)
+      - name: Extract Only Clean Live TV
         run: |
           echo "#EXTM3U" > playlist.m3u
 
@@ -27,26 +27,44 @@ jobs:
             info=$0
             getline url
 
-            # Skip VOD categories
+            # ❌ Skip Movies / Series / VOD
             if (info ~ /(movie|vod|series|film|cinema)/) next
 
-            # Keep only real TV categories
-            if (info ~ /(sports|news|entertainment|kids|music|hindi|india|tv)/) {
+            # ✅ Keep only useful Live TV
+            if (info ~ /(star sports|sony sports|sports18|dd sports|news|aaj tak|abp|zee news|india tv|republic|ndtv|colors|sony|star plus|zee tv)/) {
               print info
               print url
             }
           }
           ' full.m3u >> playlist.m3u
 
-      - name: Remove Duplicate Channels
+      - name: Remove Duplicates
         run: |
           awk '!seen[$0]++' playlist.m3u > temp.m3u
           mv temp.m3u playlist.m3u
+
+      - name: Limit Channels (Max 400)
+        run: |
+          awk '
+          BEGIN{count=0}
+          /^#EXTINF/ {
+            if(count<400){
+              print
+              getline
+              print
+              count++
+            }
+          }
+          ' playlist.m3u > limited.m3u
+
+          echo "#EXTM3U" > final.m3u
+          cat limited.m3u >> final.m3u
+          mv final.m3u playlist.m3u
 
       - name: Commit & Push
         run: |
           git config --global user.name "bot"
           git config --global user.email "bot@users.noreply.github.com"
           git add playlist.m3u
-          git commit -m "Auto update $(date)" || echo "No changes"
+          git commit -m "Ultra clean update $(date)" || echo "No changes"
           git push
