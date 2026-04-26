@@ -1,4 +1,4 @@
-name: IPTV Auto Proxy Playlist
+name: IPTV Live TV Only Playlist
 
 on:
   schedule:
@@ -16,15 +16,32 @@ jobs:
         run: |
           curl -L "http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts" -o full.m3u
 
-      - name: Filter Useful Channels
+      - name: Extract Only Live TV (Remove Movies/Series)
         run: |
           echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
 
-      - name: Clean Duplicate Links
+          awk '
+          BEGIN{IGNORECASE=1}
+
+          /#EXTINF/ {
+            info=$0
+            getline url
+
+            # Skip VOD categories
+            if (info ~ /(movie|vod|series|film|cinema)/) next
+
+            # Keep only real TV categories
+            if (info ~ /(sports|news|entertainment|kids|music|hindi|india|tv)/) {
+              print info
+              print url
+            }
+          }
+          ' full.m3u >> playlist.m3u
+
+      - name: Remove Duplicate Channels
         run: |
-          awk '!seen[$0]++' playlist.m3u > clean.m3u
-          mv clean.m3u playlist.m3u
+          awk '!seen[$0]++' playlist.m3u > temp.m3u
+          mv temp.m3u playlist.m3u
 
       - name: Commit & Push
         run: |
