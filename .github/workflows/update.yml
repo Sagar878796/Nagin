@@ -1,4 +1,4 @@
-name: Ultra Clean IPTV Playlist
+name: IPTV Live TV + IPL Section
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
         run: |
           curl -L "http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts" -o full.m3u
 
-      - name: Extract Only Clean Live TV
+      - name: Create Clean Playlist with IPL Section
         run: |
           echo "#EXTM3U" > playlist.m3u
 
@@ -27,11 +27,26 @@ jobs:
             info=$0
             getline url
 
-            # ❌ Skip Movies / Series / VOD
+            # ❌ Remove Movies / Series / VOD
             if (info ~ /(movie|vod|series|film|cinema)/) next
 
-            # ✅ Keep only useful Live TV
-            if (info ~ /(star sports|sony sports|sports18|dd sports|news|aaj tak|abp|zee news|india tv|republic|ndtv|colors|sony|star plus|zee tv)/) {
+            # 🔥 IPL / Cricket → force into IPL group
+            if (info ~ /(star sports|sports18|cricket|ipl)/) {
+              gsub(/group-title="[^"]*"/, "group-title=\"IPL\"", info)
+              print info
+              print url
+            }
+
+            # 📰 News Channels
+            else if (info ~ /(news|aaj tak|abp|zee news|ndtv|republic)/) {
+              gsub(/group-title="[^"]*"/, "group-title=\"News\"", info)
+              print info
+              print url
+            }
+
+            # 📺 Entertainment
+            else if (info ~ /(star plus|sony|zee tv|colors)/) {
+              gsub(/group-title="[^"]*"/, "group-title=\"Entertainment\"", info)
               print info
               print url
             }
@@ -43,12 +58,12 @@ jobs:
           awk '!seen[$0]++' playlist.m3u > temp.m3u
           mv temp.m3u playlist.m3u
 
-      - name: Limit Channels (Max 400)
+      - name: Limit Size (Max 500 Channels)
         run: |
           awk '
           BEGIN{count=0}
           /^#EXTINF/ {
-            if(count<400){
+            if(count<500){
               print
               getline
               print
@@ -66,5 +81,5 @@ jobs:
           git config --global user.name "bot"
           git config --global user.email "bot@users.noreply.github.com"
           git add playlist.m3u
-          git commit -m "Ultra clean update $(date)" || echo "No changes"
+          git commit -m "Auto update $(date)" || echo "No changes"
           git push
