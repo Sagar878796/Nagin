@@ -1,4 +1,4 @@
-name: IPL 2026 Only Playlist
+name: Full IPL 2026 Playlist (All Channels)
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
         run: |
           curl -L "http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts" -o full.m3u
 
-      - name: Extract Only IPL (2026) Group
+      - name: Extract ALL IPL Channels (No Miss)
         run: |
           echo "#EXTM3U" > playlist.m3u
 
@@ -27,26 +27,48 @@ jobs:
             info=$0
             getline url
 
-            # ❌ Remove Movies / Series
+            # ❌ Remove Movies / VOD
             if (info ~ /(movie|vod|series|film|cinema)/) next
 
-            # ✅ Keep ONLY IPL (2026) group (exact match)
-            if (info ~ /group-title="IPL \(2026\)"/) {
+            # ✅ Include ALL IPL related entries
+            if (info ~ /(ipl|cricket|star sports|willow)/) {
+
+              # 🔥 Force group to IPL (2026)
+              gsub(/group-title="[^"]*"/, "group-title=\"IPL (2026)\"", info)
+
               print info
               print url
             }
           }
           ' full.m3u >> playlist.m3u
 
-      - name: Remove Duplicates
+      - name: Remove Duplicate Channels
         run: |
           awk '!seen[$0]++' playlist.m3u > temp.m3u
           mv temp.m3u playlist.m3u
+
+      - name: Limit Size (Avoid GitHub Error)
+        run: |
+          awk '
+          BEGIN{count=0}
+          /^#EXTINF/ {
+            if(count<300){
+              print
+              getline
+              print
+              count++
+            }
+          }
+          ' playlist.m3u > limited.m3u
+
+          echo "#EXTM3U" > final.m3u
+          cat limited.m3u >> final.m3u
+          mv final.m3u playlist.m3u
 
       - name: Commit & Push
         run: |
           git config --global user.name "bot"
           git config --global user.email "bot@users.noreply.github.com"
           git add playlist.m3u
-          git commit -m "IPL 2026 update $(date)" || echo "No changes"
+          git commit -m "Full IPL update $(date)" || echo "No changes"
           git push
