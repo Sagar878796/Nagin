@@ -16,7 +16,8 @@ jobs:
       - name: Download Playlist (with retry)
         run: |
           URL="http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts"
-name: Filter Useful Channels
+
+name:
         run: |
           echo "#EXTM3U" > playlist.m3u
           grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
