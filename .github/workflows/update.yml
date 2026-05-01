@@ -1,4 +1,4 @@
-name: IPTV Auto Proxy Playlist
+name: IPTV Auto Proxy Playlist (Live TV Only)
 
 on:
   schedule:
@@ -13,15 +13,10 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Download Playlist (with retry)
+      - name: Download Playlist (Retry + Headers)
         run: |
           URL="http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts"
 
-name:
-        run: |
-          echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
-          
           for i in 1 2 3; do
             echo "Attempt $i..."
             curl -L \
@@ -46,30 +41,45 @@ name:
             exit 1
           fi
 
-      - name: Filter Channels
+      - name: Filter Only Live TV Channels
         run: |
           echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
+
+          awk '
+          /#EXTINF/ {
+            line=$0
+            getline url
+
+            # Skip movies & series
+            if (url ~ /\/movie\// || url ~ /\/series\//) next
+
+            # Skip VOD categories
+            if (line ~ /VOD|Movies|Series/i) next
+
+            print line
+            print url
+          }
+          ' full.m3u >> playlist.m3u
 
       - name: Remove Duplicates
         run: |
           awk '!seen[$0]++' playlist.m3u > clean.m3u
           mv clean.m3u playlist.m3u
 
-      - name: Check Final Playlist
+      - name: Final Check
         run: |
           if [ ! -s playlist.m3u ]; then
             echo "❌ Final playlist empty"
             exit 1
           fi
 
-      - name: Commit & Push (only if changed)
+      - name: Commit & Push
         run: |
           git config --global user.name "bot"
           git config --global user.email "bot@users.noreply.github.com"
 
           git add playlist.m3u
-          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git diff --cached --quiet && echo "No changes" && exit 0
 
           git commit -m "Auto update $(date)"
           git push
