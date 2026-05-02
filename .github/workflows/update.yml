@@ -1,4 +1,4 @@
-name: IPTV Ultimate Playlist (India + Proxy + Stable)
+name: IPTV Stable Playlist (India + Proxy)
 
 on:
   schedule:
@@ -18,18 +18,13 @@ jobs:
           URL="http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts"
 
           for i in 1 2 3; do
-            echo "Attempt $i..."
             curl -L -A "Mozilla/5.0" --connect-timeout 10 --max-time 30 "$URL" -o full.m3u && break
             sleep 5
           done
 
       - name: Validate Playlist
         run: |
-          if [ ! -s full.m3u ]; then
-            echo "Download failed"
-            exit 1
-          fi
-
+          [ -s full.m3u ] || exit 1
           grep -q "#EXTM3U" full.m3u || exit 1
 
       - name: Filter + Apply Proxy
@@ -43,11 +38,9 @@ jobs:
             info=$0
             getline url
 
-            # Skip movies/series
             if (url ~ /\/movie\// || url ~ /\/series\//) next
             if (info ~ /(VOD|Movies|Series)/) next
 
-            # Only Indian
             if (info !~ /(IN|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) next
 
             print info
@@ -60,30 +53,10 @@ jobs:
           awk '!seen[$0]++' playlist.m3u > tmp.m3u
           mv tmp.m3u playlist.m3u
 
-      # ✅ FIXED VERSION (No crash)
-      - name: Remove Dead Links (Stable)
-        run: |
-          echo "#EXTM3U" > final.m3u
-
-          while IFS= read -r line; do
-            if [[ "$line" == \#EXTINF* ]]; then
-              read -r url || break
-
-              code=$(curl -o /dev/null -s -w "%{http_code}" --max-time 8 "$url")
-
-              if [[ "$code" == "200" || "$code" == "301" || "$code" == "302" ]]; then
-                echo "$line" >> final.m3u
-                echo "$url" >> final.m3u
-              fi
-            fi
-          done < playlist.m3u
-
-          mv final.m3u playlist.m3u
-
-      - name: Final Safety Check
+      - name: Final Check
         run: |
           if [ ! -s playlist.m3u ]; then
-            echo "Final playlist empty"
+            echo "Empty playlist"
             exit 1
           fi
 
@@ -95,5 +68,5 @@ jobs:
           git add playlist.m3u
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "🔥 Stable auto update $(date)"
+          git commit -m "✅ Stable update $(date)"
           git push
