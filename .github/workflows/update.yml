@@ -1,4 +1,4 @@
-name: IPTV Ultimate Playlist (India + Proxy + Clean)
+name: IPTV Ultimate Playlist (India + Proxy + Stable)
 
 on:
   schedule:
@@ -40,15 +40,17 @@ jobs:
 
           awk -v proxy="$PROXY" '
           /#EXTINF/ {
-            line=$0
+            info=$0
             getline url
 
+            # Skip movies/series
             if (url ~ /\/movie\// || url ~ /\/series\//) next
-            if (line ~ /(VOD|Movies|Series)/) next
+            if (info ~ /(VOD|Movies|Series)/) next
 
-            if (line !~ /(IN|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) next
+            # Only Indian
+            if (info !~ /(IN|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) next
 
-            print line
+            print info
             print proxy url
           }
           ' full.m3u >> playlist.m3u
@@ -58,14 +60,14 @@ jobs:
           awk '!seen[$0]++' playlist.m3u > tmp.m3u
           mv tmp.m3u playlist.m3u
 
-      - name: Remove Dead Links (Fast Scan)
+      # ✅ FIXED VERSION (No crash)
+      - name: Remove Dead Links (Stable)
         run: |
           echo "#EXTM3U" > final.m3u
 
-          exec 3< playlist.m3u
-          while read -r line <&3; do
+          while IFS= read -r line; do
             if [[ "$line" == \#EXTINF* ]]; then
-              read -r url <&3
+              read -r url || break
 
               code=$(curl -o /dev/null -s -w "%{http_code}" --max-time 8 "$url")
 
@@ -74,7 +76,7 @@ jobs:
                 echo "$url" >> final.m3u
               fi
             fi
-          done
+          done < playlist.m3u
 
           mv final.m3u playlist.m3u
 
@@ -93,5 +95,5 @@ jobs:
           git add playlist.m3u
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "🚀 Ultimate auto update $(date)"
+          git commit -m "🔥 Stable auto update $(date)"
           git push
