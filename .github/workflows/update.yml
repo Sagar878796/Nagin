@@ -54,15 +54,10 @@ jobs:
             if (url ~ /\/movie\// || url ~ /\/series\//) next
 
             # Skip VOD categories
-            if (line ~ /VOD|Movies|Series/i) next
+            if (line ~ /(VOD|Movies|Series)/) next
 
-            # Keep only Indian channels
-            if (
-              line ~ /country="?IN"?/ ||
-              line ~ /tvg-country="?IN"?/ ||
-              line ~ /India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada/i ||
-              line ~ /Sports|Cricket|IPL/i
-            ) {
+            # Keep only Indian channels (FIXED)
+            if (line ~ /(country="?IN"?|tvg-country="?IN"?|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) {
               print line
               print url
             }
