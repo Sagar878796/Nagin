@@ -1,4 +1,4 @@
-name: IPTV Auto Proxy Playlist (Live TV Only)
+name: IPTV Auto Proxy Playlist (India Live TV Only)
 
 on:
   schedule:
@@ -41,7 +41,7 @@ jobs:
             exit 1
           fi
 
-      - name: Filter Only Live TV Channels
+      - name: Filter Only Indian Live TV Channels
         run: |
           echo "#EXTM3U" > playlist.m3u
 
@@ -56,8 +56,16 @@ jobs:
             # Skip VOD categories
             if (line ~ /VOD|Movies|Series/i) next
 
-            print line
-            print url
+            # Keep only Indian channels
+            if (
+              line ~ /country="?IN"?/ ||
+              line ~ /tvg-country="?IN"?/ ||
+              line ~ /India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada/i ||
+              line ~ /Sports|Cricket|IPL/i
+            ) {
+              print line
+              print url
+            }
           }
           ' full.m3u >> playlist.m3u
 
@@ -75,11 +83,11 @@ jobs:
 
       - name: Commit & Push
         run: |
-          git config --global user.name "bot"
-          git config --global user.email "bot@users.noreply.github.com"
+          git config --global user.name "iptv-bot"
+          git config --global user.email "iptv-bot@users.noreply.github.com"
 
           git add playlist.m3u
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "Auto update $(date)"
+          git commit -m "🇮🇳 Auto update Indian Live TV $(date)"
           git push
