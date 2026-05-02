@@ -1,4 +1,4 @@
-name: IPTV Auto Proxy Playlist (India Live TV Only)
+name: IPTV Ultimate Playlist (India + Proxy + Clean)
 
 on:
   schedule:
@@ -13,76 +13,85 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Download Playlist (Retry + Headers)
+      - name: Download Playlist
         run: |
           URL="http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts"
 
           for i in 1 2 3; do
             echo "Attempt $i..."
-            curl -L \
-              -A "Mozilla/5.0" \
-              --connect-timeout 10 \
-              --max-time 30 \
-              "$URL" -o full.m3u && break
-
-            echo "Retrying in 5 seconds..."
+            curl -L -A "Mozilla/5.0" --connect-timeout 10 --max-time 30 "$URL" -o full.m3u && break
             sleep 5
           done
 
-      - name: Validate Download
+      - name: Validate Playlist
         run: |
           if [ ! -s full.m3u ]; then
-            echo "❌ Download failed or empty file"
+            echo "Download failed"
             exit 1
           fi
 
-          if ! grep -q "#EXTM3U" full.m3u; then
-            echo "❌ Invalid playlist format"
-            exit 1
-          fi
+          grep -q "#EXTM3U" full.m3u || exit 1
 
-      - name: Filter Only Indian Live TV Channels
+      - name: Filter + Apply Proxy
         run: |
           echo "#EXTM3U" > playlist.m3u
 
-          awk '
+          PROXY="https://bitter-sunset-2179.sagarsutradhar046.workers.dev/?url="
+
+          awk -v proxy="$PROXY" '
           /#EXTINF/ {
             line=$0
             getline url
 
-            # Skip movies & series
             if (url ~ /\/movie\// || url ~ /\/series\//) next
-
-            # Skip VOD categories
             if (line ~ /(VOD|Movies|Series)/) next
 
-            # Keep only Indian channels (FIXED)
-            if (line ~ /(country="?IN"?|tvg-country="?IN"?|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) {
-              print line
-              print url
-            }
+            if (line !~ /(IN|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) next
+
+            print line
+            print proxy url
           }
           ' full.m3u >> playlist.m3u
 
       - name: Remove Duplicates
         run: |
-          awk '!seen[$0]++' playlist.m3u > clean.m3u
-          mv clean.m3u playlist.m3u
+          awk '!seen[$0]++' playlist.m3u > tmp.m3u
+          mv tmp.m3u playlist.m3u
 
-      - name: Final Check
+      - name: Remove Dead Links (Fast Scan)
+        run: |
+          echo "#EXTM3U" > final.m3u
+
+          exec 3< playlist.m3u
+          while read -r line <&3; do
+            if [[ "$line" == \#EXTINF* ]]; then
+              read -r url <&3
+
+              code=$(curl -o /dev/null -s -w "%{http_code}" --max-time 8 "$url")
+
+              if [[ "$code" == "200" || "$code" == "301" || "$code" == "302" ]]; then
+                echo "$line" >> final.m3u
+                echo "$url" >> final.m3u
+              fi
+            fi
+          done
+
+          mv final.m3u playlist.m3u
+
+      - name: Final Safety Check
         run: |
           if [ ! -s playlist.m3u ]; then
-            echo "❌ Final playlist empty"
+            echo "Final playlist empty"
             exit 1
           fi
 
       - name: Commit & Push
         run: |
           git config --global user.name "iptv-bot"
-          git config --global user.email "iptv-bot@users.noreply.github.com"
+          git config --global user.email "bot@users.noreply.github.com"
 
           git add playlist.m3u
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "🇮🇳 Auto update Indian Live TV $(date)"
+          git commit -m "🚀 Ultimate auto update $(date)"
           git push
