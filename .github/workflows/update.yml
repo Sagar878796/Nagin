@@ -1,72 +1,33 @@
-name: IPTV Stable Playlist (India + Proxy)
+name: Auto JSON to M3U
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 */4 * * *"   # har 4 ghante update
   workflow_dispatch:
 
 jobs:
-  update:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Download Playlist
-        run: |
-          URL="http://desyra.co:8080/get.php?username=gRVSxCJCuX&password=yummy9training&type=m3u_plus&output=ts"
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
 
-          for i in 1 2 3; do
-            curl -L -A "Mozilla/5.0" --connect-timeout 10 --max-time 30 "$URL" -o full.m3u && break
-            sleep 5
-          done
+      - name: Install requests
+        run: pip install requests
 
-      - name: Validate Playlist
-        run: |
-          [ -s full.m3u ] || exit 1
-          grep -q "#EXTM3U" full.m3u || exit 1
-
-      - name: Filter + Apply Proxy
-        run: |
-          echo "#EXTM3U" > playlist.m3u
-
-          PROXY="https://bitter-sunset-2179.sagarsutradhar046.workers.dev/?url="
-
-          awk -v proxy="$PROXY" '
-          /#EXTINF/ {
-            info=$0
-            getline url
-
-            if (url ~ /\/movie\// || url ~ /\/series\//) next
-            if (info ~ /(VOD|Movies|Series)/) next
-
-            if (info !~ /(IN|India|Hindi|Tamil|Telugu|Punjabi|Bengali|Marathi|Malayalam|Kannada|Sports|Cricket|IPL)/) next
-
-            print info
-            print proxy url
-          }
-          ' full.m3u >> playlist.m3u
-
-      - name: Remove Duplicates
-        run: |
-          awk '!seen[$0]++' playlist.m3u > tmp.m3u
-          mv tmp.m3u playlist.m3u
-
-      - name: Final Check
-        run: |
-          if [ ! -s playlist.m3u ]; then
-            echo "Empty playlist"
-            exit 1
-          fi
+      - name: Generate M3U
+        run: python generate.py
 
       - name: Commit & Push
         run: |
-          git config --global user.name "iptv-bot"
-          git config --global user.email "bot@users.noreply.github.com"
-
+          git config --global user.name "auto-bot"
+          git config --global user.email "bot@github.com"
           git add playlist.m3u
-          git diff --cached --quiet && echo "No changes" && exit 0
-
-          git commit -m "✅ Stable update $(date)"
+          git commit -m "Auto update playlist" || echo "No changes"
           git push
