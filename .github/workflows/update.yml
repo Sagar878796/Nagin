@@ -1,4 +1,4 @@
-name: JTV JSON → M3U Generator
+name: JTV JSON → M3U Generator (DRM FIXED)
 
 permissions:
   contents: write
@@ -28,25 +28,32 @@ jobs:
           OUTPUT=Playlist/index.m3u
           JSON=data.json
 
-          # Clean old
+          # Clean old files
           rm -f $OUTPUT $JSON
 
           # Header
           echo '#EXTM3U' > $OUTPUT
           echo "# Updated $(date)" >> $OUTPUT
 
-          # Fetch your JSON
+          # Fetch JSON
           echo "Fetching JSON..."
           curl -L -s "https://allinonereborn.online/jtv-fetch/jstr4web.json" -o $JSON
 
-          # Check JSON
+          # Validate JSON
           if jq empty $JSON 2>/dev/null; then
-            echo "Valid JSON ✅"
+            echo "Valid JSON ✅ Generating playlist..."
 
             jq -r '
             .[]? |
             select(.url != null) |
-            "#EXTINF:-1 tvg-id=\"\(.id // "0")\" tvg-name=\"\(.name // .title // "Channel")\" tvg-logo=\"\(.logo // "")\" group-title=\"\(.group // "JioTV")\",\(.name // .title // "Channel")\n\(.url)"
+
+            "#EXTINF:-1 tvg-id=\"\(.id)\" tvg-name=\"\(.name)\" tvg-logo=\"\(.logo)\" group-title=\"\(.category)\",\(.name)"
+            +
+            "\n#KODIPROP:inputstream.adaptive.license_type=clearkey"
+            +
+            "\n#KODIPROP:inputstream.adaptive.license_key=\(.keyId):\(.key)"
+            +
+            "\n\(.url)"
             ' $JSON >> $OUTPUT
 
           else
