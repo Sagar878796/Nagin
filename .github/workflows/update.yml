@@ -1,5 +1,8 @@
 name: JSON → M3U IPTV Generator
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: "*/15 * * * *"
@@ -12,52 +15,58 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Generate playlist
         run: |
-          mkdir -p Playlist/crik.m3u
+          mkdir -p Playlist
 
-          HTML=html.txt
+          HTML=Playlist/index.html
           HEADER=header.m3u
           BODY=body.m3u
           JSON=data.json
           COOKIE=cookie.json
 
-          # Telegram redirect
+          # Clean old files
+          rm -f $HEADER $BODY
+
+          # Telegram redirect page
           echo '<!DOCTYPE html><html><script>window.location.href="https://telegram.me/rkdyiptv";</script></html>' > $HTML
 
           # Header
           echo '#EXTM3U' > $HEADER
           echo '# Credit: RKDYIPTV IPTV Playlist' >> $HEADER
-          echo "#Updated $(date)" >> $HEADER
+          echo "# Updated $(date)" >> $HEADER
 
           # Fetch cookie
-          curl -L -s https://allinonereborn.online/jtv-fetch/jstr4web.json -o $COOKIE || echo '{}' > $COOKIE
+          curl -L -s https://allrounder-live.pages.dev/api/cookie.json -o $COOKIE || echo '{}' > $COOKIE
           COOKIE_VALUE=$(jq -r '.cookie // ""' $COOKIE)
 
-          # Fetch JSON
-          curl -L -s https://allinonereborn.online/jtv-fetch/jstr4web.json -o $JSON || echo '[]' > $JSON
+          # Fetch JSON (FIXED URL)
+          curl -L -s https://raw.githubusercontent.com/Shubhamkur/json/main/jspo.json -o $JSON || echo '[]' > $JSON
 
           # Convert JSON → M3U
           jq -r --arg cookie "$COOKIE_VALUE" '
           .[]? |
           select(.url != null) |
           "#EXTINF:-1 tvg-id=\"\(.id // "0")\" tvg-name=\"\(.title // "Channel")\" tvg-logo=\"\(.logo // "https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg")\" group-title=\"\(.group // "Sports")\",\(.title // "Channel")\n#KODIPROP:inputstream.adaptive.license_type=clearkey\n#KODIPROP:inputstream.adaptive.license_key=\(.keyId // ""):\(.key // "")\n#EXTVLCOPT:http-user-agent=billatvoriginals\n#EXTHTTP:{ \"cookie\":\"\($cookie)\" }\n\(.url)"
-          ' $JSON >> $BODY || true
+          ' $JSON > $BODY
 
-          cat $HTML $HEADER $BODY > Playlist
+          # Merge into final file
+          cat $HEADER $BODY >> $HTML
 
       - name: Commit playlist
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add Playlist
+          git add Playlist/index.html
           git commit -m "Auto update IPTV playlist $(date)" || echo "No changes"
 
       - name: Push changes
         run: |
           git pull --rebase origin main || true
-          git push origin main || true
+          git push origin main
