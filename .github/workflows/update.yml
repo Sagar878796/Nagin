@@ -1,33 +1,108 @@
-name: Auto JSON to M3U
+name: Auto-Update M3U
+
+permissions:
+  contents: write
 
 on:
-  schedule:
-    - cron: "0 */4 * * *"   # har 4 ghante update
   workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'   # har 6 ghante (zyada safe)
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout main branch
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
+      - name: Install jq + curl
+        run: sudo apt-get update && sudo apt-get install -y jq curl
 
-      - name: Install requests
-        run: pip install requests
+      - name: Generate jiotv.m3u
+        run: |
+          echo "📥 Fetching JSON..."
 
-      - name: Generate M3U
-        run: python generate.py
+          URLS=(
+            "https://jtv.pfy.workers.dev"
+            "https://allinonereborn.online/jtv-fetch/jstr4web.json"
+          )
+
+          JSON=""
+
+          # 🔁 Multi-source fallback
+          for URL in "${URLS[@]}"; do
+            echo "Trying $URL"
+            JSON=$(curl -sfL \
+              -H "User-Agent: Mozilla/5.0" \
+              -H "Accept: application/json" \
+              "$URL") && break
+          done
+
+          if [ -z "$JSON" ]; then
+            echo "❌ All sources failed"
+            exit 1
+          fi
+
+          if [[ "$JSON" == \<* ]]; then
+            echo "❌ Got HTML instead of JSON"
+            exit 1
+          fi
+
+          echo "#EXTM3U" > jiotv.m3u
+
+          echo "$JSON" | jq -r '
+            def normalize:
+              if type == "array" then .
+              elif type == "object" then
+                if has("channels") then .channels
+                elif has("data") then .data
+                elif has("list") then .list
+                else [.[]]
+                end
+              else []
+              end;
+
+            normalize[]
+            | select(type=="object")
+
+            | (.name // .title // .channel_name // "Unknown") as $name
+            | (.logo // .tvg_logo // "") as $logo
+            | (.group // .category // "Live TV") as $group
+            | (.url // .link // .stream_url // .mpd // "") as $url
+
+            | select($url != "")
+
+            | "#EXTINF:-1 tvg-logo=\"\($logo)\" group-title=\"\($group)\",\($name)"
+            , "#EXTVLCOPT:http-user-agent=Mozilla/5.0"
+            , $url
+            , ""
+          ' >> jiotv.m3u
+
+          # 🧹 Remove duplicate links
+          awk '!seen[$0]++' jiotv.m3u > temp && mv temp jiotv.m3u
+
+          # ✅ Final check
+          COUNT=$(grep -c "^#EXTINF" jiotv.m3u)
+
+          if [ "$COUNT" -lt 5 ]; then
+            echo "❌ Too few channels ($COUNT)"
+            exit 1
+          fi
+
+          echo "✅ Generated $COUNT channels"
 
       - name: Commit & Push
         run: |
           git config --global user.name "auto-bot"
           git config --global user.email "bot@github.com"
-          git add playlist.m3u
-          git commit -m "Auto update playlist" || echo "No changes"
+
+          git add jiotv.m3u
+
+          if git diff --cached --quiet; then
+            echo "➡️ No changes"
+            exit 0
+          fi
+
+          git commit -m "🔄 Auto Update: $(date -u '+%Y-%m-%d %H:%M')"
           git push
