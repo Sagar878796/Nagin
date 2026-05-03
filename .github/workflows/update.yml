@@ -1,4 +1,4 @@
-name: JSON → M3U IPTV Generator
+name: JTV JSON → M3U Generator
 
 permissions:
   contents: write
@@ -25,48 +25,40 @@ jobs:
         run: |
           mkdir -p Playlist
 
-          HTML=Playlist/index.html
-          HEADER=header.m3u
-          BODY=body.m3u
+          OUTPUT=Playlist/index.m3u
           JSON=data.json
-          COOKIE=cookie.json
 
-          # Clean old files
-          rm -f $HEADER $BODY
-
-          # Telegram redirect page
-          echo '<!DOCTYPE html><html><script>window.location.href="https://telegram.me/rkdyiptv";</script></html>' > $HTML
+          # Clean old
+          rm -f $OUTPUT $JSON
 
           # Header
-          echo '#EXTM3U' > $HEADER
-          echo '# Credit: RKDYIPTV IPTV Playlist' >> $HEADER
-          echo "# Updated $(date)" >> $HEADER
+          echo '#EXTM3U' > $OUTPUT
+          echo "# Updated $(date)" >> $OUTPUT
 
-          # Fetch cookie
-          curl -L -s https://allrounder-live.pages.dev/api/cookie.json -o $COOKIE || echo '{}' > $COOKIE
-          COOKIE_VALUE=$(jq -r '.cookie // ""' $COOKIE)
+          # Fetch your JSON
+          echo "Fetching JSON..."
+          curl -L -s "https://allinonereborn.online/jtv-fetch/jstr4web.json" -o $JSON
 
-          # Fetch JSON (FIXED URL)
-          curl -L -s https://raw.githubusercontent.com/Shubhamkur/json/main/jspo.json -o $JSON || echo '[]' > $JSON
+          # Check JSON
+          if jq empty $JSON 2>/dev/null; then
+            echo "Valid JSON ✅"
 
-          # Convert JSON → M3U
-          jq -r --arg cookie "$COOKIE_VALUE" '
-          .[]? |
-          select(.url != null) |
-          "#EXTINF:-1 tvg-id=\"\(.id // "0")\" tvg-name=\"\(.title // "Channel")\" tvg-logo=\"\(.logo // "https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg")\" group-title=\"\(.group // "Sports")\",\(.title // "Channel")\n#KODIPROP:inputstream.adaptive.license_type=clearkey\n#KODIPROP:inputstream.adaptive.license_key=\(.keyId // ""):\(.key // "")\n#EXTVLCOPT:http-user-agent=billatvoriginals\n#EXTHTTP:{ \"cookie\":\"\($cookie)\" }\n\(.url)"
-          ' $JSON > $BODY
+            jq -r '
+            .[]? |
+            select(.url != null) |
+            "#EXTINF:-1 tvg-id=\"\(.id // "0")\" tvg-name=\"\(.name // .title // "Channel")\" tvg-logo=\"\(.logo // "")\" group-title=\"\(.group // "JioTV")\",\(.name // .title // "Channel")\n\(.url)"
+            ' $JSON >> $OUTPUT
 
-          # Merge into final file
-          cat $HEADER $BODY >> $HTML
+          else
+            echo "Invalid JSON ❌"
+            echo "#EXTINF:-1,No Channels Available" >> $OUTPUT
+          fi
 
-      - name: Commit playlist
+      - name: Commit & Push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add Playlist/index.html
-          git commit -m "Auto update IPTV playlist $(date)" || echo "No changes"
-
-      - name: Push changes
-        run: |
+          git add Playlist/index.m3u
+          git commit -m "Auto update JTV playlist $(date)" || echo "No changes"
           git pull --rebase origin main || true
           git push origin main
