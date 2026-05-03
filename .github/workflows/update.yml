@@ -1,108 +1,63 @@
-name: Auto-Update M3U
-
-permissions:
-  contents: write
+name: JSON → M3U IPTV Generator
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'   # har 6 ghante (zyada safe)
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
 
 jobs:
-  update:
+  generate-playlist:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main branch
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install jq + curl
-        run: sudo apt-get update && sudo apt-get install -y jq curl
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Generate jiotv.m3u
+      - name: Generate playlist
         run: |
-          echo "📥 Fetching JSON..."
+          mkdir -p Playlist/crik.m3u
 
-          URLS=(
-            "https://jtv.pfy.workers.dev"
-            "https://allinonereborn.online/jtv-fetch/jstr4web.json"
-          )
+          HTML=html.txt
+          HEADER=header.m3u
+          BODY=body.m3u
+          JSON=data.json
+          COOKIE=cookie.json
 
-          JSON=""
+          # Telegram redirect
+          echo '<!DOCTYPE html><html><script>window.location.href="https://telegram.me/rkdyiptv";</script></html>' > $HTML
 
-          # 🔁 Multi-source fallback
-          for URL in "${URLS[@]}"; do
-            echo "Trying $URL"
-            JSON=$(curl -sfL \
-              -H "User-Agent: Mozilla/5.0" \
-              -H "Accept: application/json" \
-              "$URL") && break
-          done
+          # Header
+          echo '#EXTM3U' > $HEADER
+          echo '# Credit: RKDYIPTV IPTV Playlist' >> $HEADER
+          echo "#Updated $(date)" >> $HEADER
 
-          if [ -z "$JSON" ]; then
-            echo "❌ All sources failed"
-            exit 1
-          fi
+          # Fetch cookie
+          curl -L -s https://allinonereborn.online/jtv-fetch/jstr4web.json -o $COOKIE || echo '{}' > $COOKIE
+          COOKIE_VALUE=$(jq -r '.cookie // ""' $COOKIE)
 
-          if [[ "$JSON" == \<* ]]; then
-            echo "❌ Got HTML instead of JSON"
-            exit 1
-          fi
+          # Fetch JSON
+          curl -L -s https://allinonereborn.online/jtv-fetch/jstr4web.json -o $JSON || echo '[]' > $JSON
 
-          echo "#EXTM3U" > jiotv.m3u
+          # Convert JSON → M3U
+          jq -r --arg cookie "$COOKIE_VALUE" '
+          .[]? |
+          select(.url != null) |
+          "#EXTINF:-1 tvg-id=\"\(.id // "0")\" tvg-name=\"\(.title // "Channel")\" tvg-logo=\"\(.logo // "https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg")\" group-title=\"\(.group // "Sports")\",\(.title // "Channel")\n#KODIPROP:inputstream.adaptive.license_type=clearkey\n#KODIPROP:inputstream.adaptive.license_key=\(.keyId // ""):\(.key // "")\n#EXTVLCOPT:http-user-agent=billatvoriginals\n#EXTHTTP:{ \"cookie\":\"\($cookie)\" }\n\(.url)"
+          ' $JSON >> $BODY || true
 
-          echo "$JSON" | jq -r '
-            def normalize:
-              if type == "array" then .
-              elif type == "object" then
-                if has("channels") then .channels
-                elif has("data") then .data
-                elif has("list") then .list
-                else [.[]]
-                end
-              else []
-              end;
+          cat $HTML $HEADER $BODY > Playlist
 
-            normalize[]
-            | select(type=="object")
-
-            | (.name // .title // .channel_name // "Unknown") as $name
-            | (.logo // .tvg_logo // "") as $logo
-            | (.group // .category // "Live TV") as $group
-            | (.url // .link // .stream_url // .mpd // "") as $url
-
-            | select($url != "")
-
-            | "#EXTINF:-1 tvg-logo=\"\($logo)\" group-title=\"\($group)\",\($name)"
-            , "#EXTVLCOPT:http-user-agent=Mozilla/5.0"
-            , $url
-            , ""
-          ' >> jiotv.m3u
-
-          # 🧹 Remove duplicate links
-          awk '!seen[$0]++' jiotv.m3u > temp && mv temp jiotv.m3u
-
-          # ✅ Final check
-          COUNT=$(grep -c "^#EXTINF" jiotv.m3u)
-
-          if [ "$COUNT" -lt 5 ]; then
-            echo "❌ Too few channels ($COUNT)"
-            exit 1
-          fi
-
-          echo "✅ Generated $COUNT channels"
-
-      - name: Commit & Push
+      - name: Commit playlist
         run: |
-          git config --global user.name "auto-bot"
-          git config --global user.email "bot@github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add Playlist/crik.m3u/index.html
+          git commit -m "Auto update IPTV playlist $(date)" || echo "No changes"
 
-          git add jiotv.m3u
-
-          if git diff --cached --quiet; then
-            echo "➡️ No changes"
-            exit 0
-          fi
-
-          git commit -m "🔄 Auto Update: $(date -u '+%Y-%m-%d %H:%M')"
-          git push
+      - name: Push changes
+        run: |
+          git pull --rebase origin main || true
+          git push origin main || true
