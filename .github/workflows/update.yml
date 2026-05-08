@@ -14,7 +14,7 @@ jobs:
 
       - name: Download Source Playlist
         run: |
-          curl -L "https://elitebeam.shop/iptv/f22An6/Playlist.m3u" -o full.m3u
+          curl -L "https://dev.denver69.fun/TP/Playlist.m3u" -o full.m3u
 
       - name: Filter Useful Channels
         run: |
