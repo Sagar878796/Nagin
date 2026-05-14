@@ -1,4 +1,7 @@
-name: JSON to M3U
+name: JSON TO M3U AUTO
+
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
@@ -10,8 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Download JSON
         run: |
@@ -23,15 +29,26 @@ jobs:
 
           jq -r '
           .[] |
-          "#EXTINF:-1 group-title=\"" + (.category // "Live") + "\"," + .name + "\n" + .url
+
+          "#EXTINF:-1 tvg-id=\"" + (.id // "") + "\" tvg-name=\"" + (.name // "") + "\" tvg-logo=\"" + (.logo // "") + "\" group-title=\"" + (.category // "Live") + "\"," + (.name // "Unknown") + "\n" +
+
+          "#KODIPROP:inputstream.adaptive.manifest_type=mpd\n" +
+
+          "#KODIPROP:inputstream.adaptive.license_type=clearkey\n" +
+
+          "#KODIPROP:inputstream.adaptive.license_key=" + (.keyId // "") + ":" + (.key // "") + "\n" +
+
+          (.url // "") + "\n"
+
           ' data.json >> playlist.m3u
 
-      - name: Commit files
+      - name: Commit & Push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
           git add playlist.m3u
-          git commit -m "Auto update M3U" || echo "No changes"
+
+          git commit -m "Auto Update Playlist" || echo "No changes"
 
           git push
