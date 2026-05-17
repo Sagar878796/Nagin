@@ -1,35 +1,58 @@
-name: IPTV Auto Proxy Playlist
+import json
+import requests
+import re
 
-on:
-  schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
+BASE_URL = "https://sayan-sportlink-jio-tv-main.pages.dev"
 
-jobs:
-  update:
-    runs-on: ubuntu-latest
+# Download channels.json
+json_url = f"{BASE_URL}/Channel/channels.json"
+channels = requests.get(json_url).json()
 
-    steps:
-      - uses: actions/checkout@v4
+m3u = "#EXTM3U\n\n"
 
-      - name: Download Source Playlist
-        run: |
-          curl -L "https://local.07live.workers.dev/playlist.m3u?username=999&password=999&type=m3u_plus&output=ts" -o full.m3u
+for ch in channels:
+    try:
+        name = ch.get("name", "Unknown")
+        logo = ch.get("logo", "")
+        group = ch.get("category", "Live TV")
+        file_name = ch.get("fileName", "")
 
-      - name: Filter Useful Channels
-        run: |
-          echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
+        page_url = f"{BASE_URL}/{file_name}"
 
-      - name: Clean Duplicate Links
-        run: |
-          awk '!seen[$0]++' playlist.m3u > clean.m3u
-          mv clean.m3u playlist.m3u
+        print(f"Checking: {name}")
 
-      - name: Commit & Push
-        run: |
-          git config --global user.name "bot"
-          git config --global user.email "bot@users.noreply.github.com"
-          git add playlist.m3u
-          git commit -m "Auto update $(date)" || echo "No changes"
-          git push
+        html = requests.get(page_url, timeout=10).text
+
+        # Find stream URL
+        stream = None
+
+        patterns = [
+            r'https?://[^"\']+\.m3u8[^"\']*',
+            r'https?://[^"\']+\.mpd[^"\']*',
+            r'https?://[^"\']+\.mp4[^"\']*'
+        ]
+
+        for pattern in patterns:
+            match = re.search(pattern, html)
+            if match:
+                stream = match.group(0)
+                break
+
+        if stream:
+            m3u += (
+                f'#EXTINF:-1 tvg-name="{name}" '
+                f'tvg-logo="{logo}" '
+                f'group-title="{group}",{name}\n'
+            )
+            m3u += stream + "\n\n"
+
+            print(f"Found stream: {name}")
+
+    except Exception as e:
+        print(f"Error: {name} -> {e}")
+
+# Save playlist
+with open("playlist.m3u", "w", encoding="utf-8") as f:
+    f.write(m3u)
+
+print("Done! playlist.m3u created")
