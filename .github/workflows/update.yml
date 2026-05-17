@@ -1,58 +1,38 @@
-import json
-import requests
-import re
+name: Update M3U
 
-BASE_URL = "https://sayan-sportlink-jio-tv-main.pages.dev"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
 
-# Download channels.json
-json_url = f"{BASE_URL}/Channel/channels.json"
-channels = requests.get(json_url).json()
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-m3u = "#EXTM3U\n\n"
+    permissions:
+      contents: write
 
-for ch in channels:
-    try:
-        name = ch.get("name", "Unknown")
-        logo = ch.get("logo", "")
-        group = ch.get("category", "Live TV")
-        file_name = ch.get("fileName", "")
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        page_url = f"{BASE_URL}/{file_name}"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-        print(f"Checking: {name}")
+      - name: Install Requests
+        run: pip install requests
 
-        html = requests.get(page_url, timeout=10).text
+      - name: Run Converter
+        run: python converter.py
 
-        # Find stream URL
-        stream = None
+      - name: Commit Playlist
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
 
-        patterns = [
-            r'https?://[^"\']+\.m3u8[^"\']*',
-            r'https?://[^"\']+\.mpd[^"\']*',
-            r'https?://[^"\']+\.mp4[^"\']*'
-        ]
+          git add playlist.m3u
+          git commit -m "Auto update playlist" || echo "No changes"
 
-        for pattern in patterns:
-            match = re.search(pattern, html)
-            if match:
-                stream = match.group(0)
-                break
-
-        if stream:
-            m3u += (
-                f'#EXTINF:-1 tvg-name="{name}" '
-                f'tvg-logo="{logo}" '
-                f'group-title="{group}",{name}\n'
-            )
-            m3u += stream + "\n\n"
-
-            print(f"Found stream: {name}")
-
-    except Exception as e:
-        print(f"Error: {name} -> {e}")
-
-# Save playlist
-with open("playlist.m3u", "w", encoding="utf-8") as f:
-    f.write(m3u)
-
-print("Done! playlist.m3u created")
+          git push
