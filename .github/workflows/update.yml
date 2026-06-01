@@ -1,9 +1,9 @@
-name: IPTV Auto Proxy Playlist
+name: Update Playlist
 
 on:
-  schedule:
-    - cron: "0 */6 * * *"
   workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
 
 jobs:
   update:
@@ -12,24 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Source Playlist
+      - name: Fetch playlist
         run: |
-          curl -L "https://df6d.short.gy/jplusamir.m3u" -o full.m3u
+          curl -L "https://df6d.short.gy/jplusamir.m3u" -o playlist.m3u
 
-      - name: Filter Useful Channels
+      - name: Commit updated file
         run: |
-          echo "#EXTM3U" > playlist.m3u
-          grep -i -A1 -E "india|hindi|star sports|sony sports|sports18|dd sports|ipl|cricket|news" full.m3u >> playlist.m3u || true
-
-      - name: Clean Duplicate Links
-        run: |
-          awk '!seen[$0]++' playlist.m3u > clean.m3u
-          mv clean.m3u playlist.m3u
-
-      - name: Commit & Push
-        run: |
-          git config --global user.name "bot"
-          git config --global user.email "bot@users.noreply.github.com"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
           git add playlist.m3u
-          git commit -m "Auto update $(date)" || echo "No changes"
+          git commit -m "Update playlist" || exit 0
           git push
